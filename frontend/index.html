@@ -1,48 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Employee Attendance System</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-  <div class="container">
+  <!-- Background Effects -->
+  <div class="bg-circle circle-1"></div>
+  <div class="bg-circle circle-2"></div>
+  <div class="bg-circle circle-3"></div>
 
-    <h1>Employee Attendance System</h1>
+  <!-- Toast -->
+  <div id="toast"></div>
 
-    <div class="form-box">
-      <input type="text" id="employeeId" placeholder="Employee ID">
+  <div class="dashboard">
 
-      <input type="text" id="employeeName" placeholder="Employee Name">
+    <!-- LEFT -->
+    <div class="left-panel">
 
-      <div class="button-group">
-        <button onclick="punchIn()">Punch In</button>
-        <button onclick="punchOut()">Punch Out</button>
+      <div class="glass-card">
+
+        <div class="title-section">
+          <span class="badge">
+            Employee Dashboard
+          </span>
+
+          <h1>
+            Employee Attendance System
+          </h1>
+
+          <p>
+            Modern employee attendance tracking dashboard
+          </p>
+        </div>
+
+        <!-- Form -->
+        <div class="form-section">
+
+          <div class="input-group">
+            <i class="fa-solid fa-id-card"></i>
+
+            <input
+              type="text"
+              id="employeeId"
+              placeholder="Employee ID"
+            />
+          </div>
+
+          <div class="input-group">
+            <i class="fa-solid fa-user"></i>
+
+            <input
+              type="text"
+              id="employeeName"
+              placeholder="Employee Name"
+            />
+          </div>
+
+          <div class="button-group">
+
+            <button
+              class="btn punch-in-btn"
+              onclick="punchIn()"
+            >
+              <i class="fa-solid fa-right-to-bracket"></i>
+              Punch In
+            </button>
+
+            <button
+              class="btn punch-out-btn"
+              onclick="punchOut()"
+            >
+              <i class="fa-solid fa-right-from-bracket"></i>
+              Punch Out
+            </button>
+
+          </div>
+
+        </div>
+
       </div>
+
+      <!-- Table -->
+      <div class="table-card">
+
+        <div class="table-header">
+          <h2>Attendance Records</h2>
+        </div>
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Punch In</th>
+                <th>Punch Out</th>
+                <th>Total Hours</th>
+              </tr>
+            </thead>
+
+            <tbody id="attendanceTableBody"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
     </div>
 
-    <h2>Attendance Records</h2>
+    <!-- RIGHT -->
+    <div class="right-panel">
 
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Date</th>
-          <th>Punch In</th>
-          <th>Punch Out</th>
-          <th>Total Hours</th>
-        </tr>
-      </thead>
+      <div class="illustration-card floating-card">
 
-      <tbody id="attendanceTableBody">
-      </tbody>
-    </table>
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+          alt="employee"
+        />
+
+        <h3>Work Tracking</h3>
+
+        <p>
+          Smart attendance monitoring with modern dashboard experience.
+        </p>
+
+      </div>
+
+      <div class="stats-card floating-card delay">
+
+        <div class="stat-box">
+          <h4>Realtime</h4>
+          <p>Attendance Monitoring</p>
+        </div>
+
+        <div class="stat-box">
+          <h4>Cloud Ready</h4>
+          <p>Production Architecture</p>
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
   <script src="script.js"></script>
+
 </body>
+
 </html>
