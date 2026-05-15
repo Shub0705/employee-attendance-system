@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Attendance System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <h1>Employee Attendance System</h1>
+
+    <div class="form-box">
+      <input type="text" id="employeeId" placeholder="Employee ID">
+
+      <input type="text" id="employeeName" placeholder="Employee Name">
+
+      <div class="button-group">
+        <button onclick="punchIn()">Punch In</button>
+        <button onclick="punchOut()">Punch Out</button>
+      </div>
+    </div>
+
+    <h2>Attendance Records</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Punch In</th>
+          <th>Punch Out</th>
+          <th>Total Hours</th>
+        </tr>
+      </thead>
+
+      <tbody id="attendanceTableBody">
+      </tbody>
+    </table>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
