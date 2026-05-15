@@ -1,1 +1,3 @@
-# employee-attendance-system
+``` bash
+Employee Attendance System
+```
