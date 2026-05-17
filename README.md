@@ -51,8 +51,8 @@ permission denied while trying to connect to the docker API at unix:///var/run/d
 ``` bash
 sudo usermod -aG jenkins docker 
 ```
-## PART — Secure SonarQube Setup
-  # Create proper directories:
+# PART — Secure SonarQube Setup
+  ## Create proper directories:
 ``` bash
 mkdir -p sonarqube_data
 mkdir -p sonarqube_logs
@@ -80,6 +80,8 @@ admin
 ```
 
 ========================================================================================================================================================
+
+
 ## Install ArgoCD in Minikube
 
 Create namespace:
