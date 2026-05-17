@@ -46,6 +46,11 @@ Developer Push Code
         ↓
     Minikube
 ```
+# ERROR: 
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+``` bash
+sudo usermod -aG jenkins docker 
+```
 
 ## Install ArgoCD in Minikube
 
