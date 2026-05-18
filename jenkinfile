@@ -1,0 +1,116 @@
+pipeline{
+    agent any
+    
+    environment{
+        IMAGE_F = "shubhamdoc0705/attendent0frontend"
+        IMAGE_B = "shubhamdoc0705/attendent0backend"
+        VERSION = "v1.0.${BUILD_NUMBER}"
+        SONAR_TOKEN = credentials('sonar-token')
+    }
+    stages{
+        stage('Git'){
+            steps{
+                git branch: 'release/dev', credentialsId: 'Git_hub', url: 'https://github.com/Shub0705/employee-attendance-system.git'
+            }
+        }
+        stage('Sonar_Scan') {
+    steps {
+        script {
+            def scannerHome = tool 'sonar-scanner'
+
+            withSonarQubeEnv('SonarQube') {
+                sh """
+                ${scannerHome}/bin/sonar-scanner \
+                  -Dsonar.projectKey=attendance-app \
+                  -Dsonar.sources=. \
+                  -Dsonar.projectVersion=${VERSION}
+                """
+            }
+        }
+    }
+}
+        stage('QUALITY_GATE') {
+    steps {
+        timeout(time: 5, unit: 'MINUTES') {
+            waitForQualityGate abortPipeline: true
+        }
+    }
+}
+        stage('BUILD'){
+            parallel{
+        stage('BUILD_FRONTEND'){
+            steps{
+               dir('frontend'){
+                   sh '''
+                   set -e
+                   
+                   docker build --pull -t ${IMAGE_F}:${VERSION} .
+                   docker tag ${IMAGE_F}:${VERSION} ${IMAGE_F}:latest 
+                   '''
+               } 
+            }
+        }
+        stage('BUILD_BACKEND'){
+            steps{
+                dir('backend'){
+                 sh '''
+                 set -e
+                 docker build --pull -t ${IMAGE_B}:${VERSION} .
+                 docker tag ${IMAGE_B}:${VERSION} ${IMAGE_B}:latest
+                 '''
+                }
+            }
+        }
+   }
+}
+        stage('SCAN'){
+            parallel{
+        stage('TRIVY_FRONTEND'){
+            steps{
+                sh '''
+                trivy image --severity HIGH,CRITICAL --exit-code 0 --ignore-unfixed ${IMAGE_F}:${VERSION}
+                '''
+            }
+        }
+        stage('TRIVY_BACKEND'){
+           steps{
+               sh '''
+               trivy image --severity HIGH,CRITICAL --exit-code 0 --ignore-unfixed ${IMAGE_B}:${VERSION}
+               '''
+           }            
+        }
+    }
+}
+        stage('PUSH_DOCKER-HUB'){
+            steps{
+                withCredentials([usernamePassword(
+                    credentialsId: 'Docker_hub',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]){
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push ${IMAGE_F}:${VERSION} 
+                    docker push ${IMAGE_F}:latest
+                    
+                    docker push ${IMAGE_B}:${VERSION} 
+                    docker push ${IMAGE_B}:latest
+                    
+                    docker logout
+                    '''
+                }
+            }
+        }
+    }
+    post{
+        success{
+            echo "BUILD successfull"
+        }
+        failure{
+            echo "Fail BUILD"
+        }
+        always{
+            sh 'docker image prune -f'
+        }
+    }
+}
