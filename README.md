@@ -49,7 +49,7 @@ Developer Push Code
 # ERROR: 
 permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
 ``` bash
-sudo usermod -aG jenkins docker 
+sudo usermod -aG docker jenkins  
 ```
 # PART — Secure SonarQube Setup
   ## Create proper directories:
@@ -73,11 +73,36 @@ docker run -d \
   -v $(pwd)/sonarqube_extensions:/opt/sonarqube/extensions \
   sonarqube:lts-community
 ```  
-  # Default login:
+  ## Default login:
   ``` bash
 admin
 admin
 ```
+## Administration -------->  Webhooks ---------> Create Webhook -------> Add any Name and then add URLhttp://Jenkins:8080/sonarqube-webhook
+
+## Install SonarQube Scanner Plugin 
+  ---> Manage Jenkins → Plugins → Available Plugins
+        ## Install:
+           SonarQube Scanner
+  ## Configure Sonar Scanner
+Go to:
+          Manage Jenkins → Global Tool Configuration
+Find:
+          SonarQube Scanner
+Click:
+          Add SonarQube Scanner
+Set:
+          Name: sonar-scanner
+
+   ## Configure SonarQube Server
+Go to:
+      Manage Jenkins → Configure System
+Find:
+      SonarQube servers
+Add:
+       Name: Sonar_qube
+Server URL:
+             http://<your-sonarqube-ip>:9000
 
 ========================================================================================================================================================
 
@@ -88,25 +113,25 @@ Create namespace:
 ``` bash
 kubectl create namespace argocd
 ```
-# Install:
+## Install:
 ``` bash
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
-# Check:
+## Check:
 ``` bash
 kubectl get pods -n argocd
 ```
-# Access ArgoCD UI
+## Access ArgoCD UI
 ``` bash
 kubectl port-forward svc/argocd-server -n argocd 8081:443
 ```
-# Get ArgoCD Password
+## Get ArgoCD Password
 ``` bash
 kubectl get secret argocd-initial-admin-secret \
 -n argocd \
 -o jsonpath="{.data.password}" | base64 -d
 ```
-# Login:
+## Login:
 ``` bash
 username: admin
 password: <output>
