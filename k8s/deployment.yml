@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: f-employee
+  namespace: posh
+  labels:
+    app: em1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: em1
+  template:
+    metadata:
+      name: f-employee
+      labels:
+        app: em1 
+    spec:
+     containers:
+      - name: f-employee-app
+        image: shubhamdoc0705/frontend1e
+        ports:
+         - containerPort: 80
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: b-employee
+  namespace: posh
+  labels:
+    app: em2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: em2
+  template:
+    metadata:
+      name: b-employee
+      labels:
+        app: em2
+    spec:
+     containers:
+      - name: b-employee-app
+        image: shubhamdoc0705/backend1e
+        ports:
+         - containerPort: 5000
+
