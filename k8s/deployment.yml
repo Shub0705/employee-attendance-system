@@ -18,7 +18,7 @@ spec:
     spec:
      containers:
       - name: f-employee-app
-        image: shubhamdoc0705/frontend1e
+        image: shubhamdoc0705/frontend1e:latest
         ports:
          - containerPort: 80
 ---
@@ -43,7 +43,7 @@ spec:
     spec:
      containers:
       - name: b-employee-app
-        image: shubhamdoc0705/backend1e
+        image: shubhamdoc0705/backend1e:latest
         ports:
          - containerPort: 5000
 
