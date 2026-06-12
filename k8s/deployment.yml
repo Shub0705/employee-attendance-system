@@ -8,9 +8,9 @@ metadata:
 spec:
   replicas: 1
   selector: 
-  matchLabels:
-    global: logic
-  tamplate:
+    matchLabels:
+      global: logic
+  template:
     metadata:
       name: Employe-frontend
       labels:
@@ -19,7 +19,7 @@ spec:
       containers:
         - name: Employee_f
           image: shubhamdoc0705/frontend:latest
-          port:
+          ports:
             containerPort: 80
 ---
 
@@ -33,9 +33,9 @@ metadata:
 spec: 
   replicas: 1
   selector:
-  matchLabels:
-    global: logic-b
-  tamplate:
+    matchLabels:
+      global: logic-b
+  template:
     metadata:
       name: Employe-backend
       labels:
@@ -44,5 +44,5 @@ spec:
       containers:
         - name: Employee-b
           image: shubhamdoc0705/backend:latest
-          port:
+          ports:
             containerPort: 5000
