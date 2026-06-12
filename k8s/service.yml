@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: Employe-frontend
+  name: employe-frontend
   namespace: job
 spec:
   selector:
@@ -13,10 +13,10 @@ spec:
 
 ---
 
-piVersion: v1
+apiVersion: v1
 kind: Service
 metadata:
-  name: Employe-bacend
+  name: employe-bacend
   namespace: job
 spec:
   selector:
