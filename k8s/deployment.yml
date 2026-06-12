@@ -1,49 +1,48 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: f-employee
-  namespace: posh
+  name: Employe
+  namespacce: job
   labels:
-    app: em1
+    global: logic
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: em1
-  template:
+  selector: 
+  matchLable:
+    global: logic
+  tamplate:
     metadata:
-      name: f-employee
+      name: Employe
       labels:
-        app: em1 
+        global: logic
     spec:
-     containers:
-      - name: f-employee-app
-        image: shubhamdoc0705/frontend1e:latest
-        ports:
-         - containerPort: 80
+      containers:
+        - name: Employee
+          image: shubhamdoc0705/frontend:latest
+          port:
+            containerPort: 80
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: b-employee
-  namespace: posh
+  name: Employe-backend
+  namespacce: job
   labels:
-    app: em2
-spec:
+    global: logic-b
+spec: 
   replicas: 1
   selector:
-    matchLabels:
-      app: em2
-  template:
+  matchLable:
+    global: logic-b
+  tamplate:
     metadata:
-      name: b-employee
+      name: Employe-backend
       labels:
-        app: em2
-    spec:
-     containers:
-      - name: b-employee-app
-        image: shubhamdoc0705/backend1e:latest
-        ports:
-         - containerPort: 5000
-
+        global: logic-b
+    spec: 
+      containers:
+        - name: Employee-b
+          image: shubhamdoc0705/backend:latest
+          port:
+            containerPort: 5000
