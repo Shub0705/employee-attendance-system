@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Employe-frontend
+  name: employe-frontend
   namespace: job
   labels:
     global: logic
@@ -12,21 +12,21 @@ spec:
       global: logic
   template:
     metadata:
-      name: Employe-frontend
+      name: employe-frontend
       labels:
         global: logic
     spec:
       containers:
-        - name: Employee_f
+        - name: employe-f
           image: shubhamdoc0705/frontend:latest
           ports:
-            containerPort: 80
+           - containerPort: 80
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Employe-backend
+  name: employe-backend
   namespace: job
   labels:
     global: logic-b
@@ -37,12 +37,12 @@ spec:
       global: logic-b
   template:
     metadata:
-      name: Employe-backend
+      name: employe-backend
       labels:
         global: logic-b
     spec: 
       containers:
-        - name: Employee-b
+        - name: employee-b
           image: shubhamdoc0705/backend:latest
           ports:
-            containerPort: 5000
+            - containerPort: 5000
