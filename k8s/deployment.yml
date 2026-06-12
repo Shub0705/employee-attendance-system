@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Employe
+  name: Employe-frontend
   namespace: job
   labels:
     global: logic
 spec:
   replicas: 1
   selector: 
-  matchLable:
+  matchLabels:
     global: logic
   tamplate:
     metadata:
-      name: Employe
+      name: Employe-frontend
       labels:
         global: logic
     spec:
       containers:
-        - name: Employee
+        - name: Employee_f
           image: shubhamdoc0705/frontend:latest
           port:
             containerPort: 80
@@ -33,7 +33,7 @@ metadata:
 spec: 
   replicas: 1
   selector:
-  matchLable:
+  matchLabels:
     global: logic-b
   tamplate:
     metadata:
