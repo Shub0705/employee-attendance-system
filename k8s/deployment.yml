@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: Employe
-  namespacce: job
+  namespace: job
   labels:
     global: logic
 spec:
@@ -27,7 +27,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: Employe-backend
-  namespacce: job
+  namespace: job
   labels:
     global: logic-b
 spec: 
