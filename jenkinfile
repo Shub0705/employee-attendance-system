@@ -1,116 +1,126 @@
 pipeline{
-    agent any
-    
+    agent any 
     environment{
-        IMAGE_F = "shubhamdoc0705/attendent0frontend"
-        IMAGE_B = "shubhamdoc0705/attendent0backend"
+        DOCKER_IMAGE = "shubhamdoc0705"
+        FRONTEND = "${DOCKER_IMAGE}/info-frontend"
+        BACKEND = "${DOCKER_IMAGE}/origin-backend"
         VERSION = "v1.0.${BUILD_NUMBER}"
-        SONAR_TOKEN = credentials('sonar-token')
     }
     stages{
-        stage('Git'){
+        stage('Git-Checkout'){
             steps{
-                git branch: 'release/dev', credentialsId: 'Git_hub', url: 'https://github.com/Shub0705/employee-attendance-system.git'
+                git branch: 'release/dev', 
+                credentialsId: 'Git', 
+                url: 'https://github.com/Shub0705/employee-attendance-system.git'
             }
         }
-        stage('Sonar_Scan') {
-    steps {
-        script {
-            def scannerHome = tool 'sonar-scanner'
-
-            withSonarQubeEnv('SonarQube') {
-                sh """
-                ${scannerHome}/bin/sonar-scanner \
-                  -Dsonar.projectKey=attendance-app \
-                  -Dsonar.sources=. \
-                  -Dsonar.projectVersion=${VERSION}
-                """
+        stage('SONAR-SCAN'){
+            steps{
+                withSonarQubeEnv('sonarqube'){
+                     withEnv(["PATH+SONAR=${tool 'sonar-scanner'}/bin"]){
+                    sh '''
+                     sonar-scanner \
+                      -Dsonar.projectKey=my-project \
+                      -Dsonar.sources=. \
+                      -Dsonar.host.url=http://172.31.39.73:9000 \
+                      -Dsonar.login=$SONAR_AUTH_TOKEN
+                    '''
+                     }
+                }
             }
         }
-    }
-}
-        stage('QUALITY_GATE') {
-    steps {
-        timeout(time: 5, unit: 'MINUTES') {
-            waitForQualityGate abortPipeline: true
+        stage('Quality Gate'){
+            steps{
+                timeout(time: 2, unit: 'MINUTES'){
+                    waitForQualityGate abortPipeline: true
+                }
+            }
         }
-    }
-}
         stage('BUILD'){
             parallel{
-        stage('BUILD_FRONTEND'){
-            steps{
-               dir('frontend'){
-                   sh '''
-                   set -e
-                   
-                   docker build --pull -t ${IMAGE_F}:${VERSION} .
-                   docker tag ${IMAGE_F}:${VERSION} ${IMAGE_F}:latest 
-                   '''
-               } 
-            }
+                stage('FRONTEND'){
+                 steps{
+                     dir('frontend'){
+                    sh '''
+                    docker build -t ${FRONTEND}:${VERSION} .
+                    docker tag ${FRONTEND}:${VERSION} ${FRONTEND}:latest
+                    '''
+                 }
+              }
+                }
+                stage('BACKEND'){
+                  steps{
+                      dir('backend'){
+                      sh '''
+                      docker build -t ${BACKEND}:${VERSION} .
+                      docker tag ${BACKEND}:${VERSION} ${BACKEND}:latest
+                      '''
+                      }
+                  }
+                  }
+              }
         }
-        stage('BUILD_BACKEND'){
+        stage('TRIVY-SCAN'){
+            parallel{
+                stage('FRONTEND'){
+                steps{
+                    sh '''
+                    trivy image --severity HIGH,CRITICAL --exit-code 1 --ignore-unfixed ${FRONTEND}:${VERSION}
+                    '''
+                }
+            }
+            stage('BACKEND'){
+                steps{
+                    sh '''
+                    trivy image --severity HIGH,CRITICAL --exit-code 0 --ignore-unfixed ${BACKEND}:${VERSION}
+                    '''
+                }
+            }
+           }
+        }
+        stage('PUSH_DOCKER'){
             steps{
-                dir('backend'){
+                withCredentials([usernamePassword(
+                    credentialsId: 'Docker',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                    )]){
+                     sh '''
+                     echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                     docker push ${FRONTEND}:${VERSION}
+                     docker push ${FRONTEND}:latest
+                     
+                     docker push ${BACKEND}:${VERSION}
+                     docker push ${BACKEND}:latest
+                     
+                     docker logout
+                     '''
+                    }
+             }
+        }
+        stage('DEPLOY'){
+            steps{
+                dir('k8s'){
                  sh '''
-                 set -e
-                 docker build --pull -t ${IMAGE_B}:${VERSION} .
-                 docker tag ${IMAGE_B}:${VERSION} ${IMAGE_B}:latest
+                 kubectl set image deployment/employe-frontend  \
+                 employe-f=${FRONTEND}:${VERSION} -n job 
+                
+                 kubectl set image deployment/employe-backend \
+                 employee-b=${BACKEND}:${VERSION} -n job
+                 
+                 kubectl rollout status deployment/employe-frontend -n job
+                 kubectl rollout status deployment/employe-backend -n job
                  '''
                 }
             }
         }
-   }
-}
-        stage('SCAN'){
-            parallel{
-        stage('TRIVY_FRONTEND'){
-            steps{
-                sh '''
-                trivy image --severity HIGH,CRITICAL --exit-code 0 --ignore-unfixed ${IMAGE_F}:${VERSION}
-                '''
+    }
+        post{
+            success {
+                echo "BUILD SUCCESSFUL"
+            }
+            failure {
+                echo "BUILD FAIL"
             }
         }
-        stage('TRIVY_BACKEND'){
-           steps{
-               sh '''
-               trivy image --severity HIGH,CRITICAL --exit-code 0 --ignore-unfixed ${IMAGE_B}:${VERSION}
-               '''
-           }            
-        }
-    }
-}
-        stage('PUSH_DOCKER-HUB'){
-            steps{
-                withCredentials([usernamePassword(
-                    credentialsId: 'Docker_hub',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]){
-                    sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push ${IMAGE_F}:${VERSION} 
-                    docker push ${IMAGE_F}:latest
-                    
-                    docker push ${IMAGE_B}:${VERSION} 
-                    docker push ${IMAGE_B}:latest
-                    
-                    docker logout
-                    '''
-                }
-            }
-        }
-    }
-    post{
-        success{
-            echo "BUILD successfull"
-        }
-        failure{
-            echo "Fail BUILD"
-        }
-        always{
-            sh 'docker image prune -f'
-        }
-    }
 }
